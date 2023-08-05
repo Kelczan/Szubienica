@@ -3,11 +3,12 @@ using System.Globalization;
 
 
 
-bool finish = false;
 HangMan hangMan = new HangMan("Pajac");
-while (!hangMan.rysowanie())
+while (!hangMan.IsFinished())
 {
+    hangMan.rysowanie();
     hangMan.typowanie();
 
 
 }
+

@@ -1,15 +1,54 @@
 ﻿using System;
+using System.ComponentModel;
 
 public class HangMan
 {
 	private string _haslo;
-    String zgadniete = "";
+    string zgadniete = "";
     int hp = 4;
     public HangMan(string haslo)
 	{
 		_haslo = haslo;
 	}
-    
+    public bool IsFinished()
+    {
+        bool win=false;
+        if (hp > 0)
+        {
+            foreach (char c in _haslo.ToLower())
+            {
+                if (!zgadniete.Contains(c))
+                    return false;
+            }
+            win = true;
+        }
+        rysowanie();
+        if (win)
+        {
+            Console.WriteLine("You Win!");
+        }
+        else Console.WriteLine("You Lose!");
+        return true;
+    }
+    private bool checkletter(char ch)
+    {
+        foreach (char c in _haslo.ToLower()) 
+        {
+            if (c == ch)  // sprawdzenie czy litera jest w haśle
+            {
+                foreach (char c2 in zgadniete.ToLower())
+                {
+                    if (c2 == ch)
+                    {
+                        return false; //sprawdzenie czy litera się nie powtarza
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void typowanie()
     {
         bool missed = true;
@@ -17,51 +56,31 @@ public class HangMan
         string quess = Console.ReadLine();
         if (quess.Length > 0)
         {
-            for (int i = 0; i < _haslo.Length; i++)
+            if (checkletter(quess.ToLower()[0]))
             {
-
-                if (_haslo[i] == quess[0])
-                {
-                    missed = false;
-                    fail = false;
-                    for (int j = 0; j < zgadniete.Length; j++)
-                    {
-
-                        if (zgadniete[j] == quess[0])
-                        {
-                            fail = true;
-                            break;
-                        }
-
-                    }
-                }
+                zgadniete += quess.ToLower()[0];
             }
-            if (fail || missed)
+            else
             {
                 hp--;
             }
-            if (!fail)
-            {
-                zgadniete = zgadniete + quess[0];
-            }
         }
     }
-    public bool rysowanie()
+    public void rysowanie()
     {
-        int much = 0;
         Console.Clear();
         Console.WriteLine("----------------------------------------");
-        Console.WriteLine("Ilość żyć: " + hp + "\n\n\n");
+        Console.WriteLine("Ilość żyć: " + hp + "\n\n");
         bool missed;
         for (int i = 0; i < _haslo.Length; i++)
         {
             missed = true;
             for (int j = 0; j < zgadniete.Length; j++)
             {
-                if (_haslo[i] == zgadniete[j])
+                if (_haslo.ToLower()[i] == zgadniete.ToLower()[j])
                 {
                     missed = false;
-                    Console.Write(zgadniete[j]);
+                    Console.Write(_haslo[i]);
                     break;
                 }
 
@@ -69,22 +88,9 @@ public class HangMan
             if (missed)
             {
                 Console.Write("*");
-                much++;
             }
         }
         Console.WriteLine();
-        // Console.WriteLine(quessed);
-        if (much > 0)
-        {
-            Console.WriteLine("Zgadnij litere, tylko pierwszy znak sie liczy:");
-            return false;
-        }
-        else
-        {
-            Console.WriteLine("Victory!!");
-            return true;
-        }
-
     }
 
 }

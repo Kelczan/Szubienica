@@ -70,17 +70,13 @@ string RandomPassword(int kat_id)
         var command = connection.CreateCommand();
         command.CommandText =
         @"
-            SELECT Password FROM(
-            SELECT row_number() OVER (ORDER BY Passwords_id ASC) AS rownumber, Password FROM Kategorie
-			INNER JOIN Passwords
-			ON Passwords.Kat_id=Kategorie.Kat_id
-			WHERE Kategorie.Kat_id = $kat_id
-			)
-			WHERE rownumber = $row
+            SELECT Password FROM Passwords
+            WHERE Kat_id = $kat_id
+            LIMIT 1 OFFSET $row
  
  
              ";
-        command.Parameters.AddWithValue("$row", rand.Next(1,KatCount(kat_id)));
+        command.Parameters.AddWithValue("$row", rand.Next(0,KatCount(kat_id)-1));
         command.Parameters.AddWithValue("$kat_id", kat_id);
         
         using (var reader = command.ExecuteReader())
